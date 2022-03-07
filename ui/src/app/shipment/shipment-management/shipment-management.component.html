@@ -1,0 +1,38 @@
+<div class="header">
+  <div class="row title">
+    <div class="col-8">Shipment Management</div>
+    <div class="col-2">
+      <input type="text" placeholder="Search"
+      class="form-control" 
+      aria-label="Small" 
+      aria-describedby="inputGroup-sizing-sm">
+    </div>
+    <div class="col-2">
+      <button type="button" class="btn btn-primary">+ Create new Shipment</button>
+    </div>
+  </div>
+</div>
+<div class="content">
+  <table class="table">
+    <thead>
+        <th class="col">Shipment Id</th>
+        <th class="col">Date shipped</th>
+        <th class="col">Manufacturer</th>
+        <th class="col">Vaccine name</th>
+        <th class="col">Quantity</th>
+        <th class="col">Insured value</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of shipment">
+        <td><a routerLink="/details/{{data.ShipmentID}}">{{ data.ShipmentID }} </a></td>
+        <td>{{ data.ClaimRequestDate | date }}</td>
+        <td>{{ data.Manufacturer }}</td>
+        <td>{{ data.Vaccine }}</td>
+        <td>{{ data.Qty }} Boxes</td>
+        <td>{{ data.InsuredValue }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+

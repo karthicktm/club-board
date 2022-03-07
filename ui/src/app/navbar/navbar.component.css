@@ -1,0 +1,10 @@
+
+.navbar{
+  border-bottom: 1px solid #ccc;
+}
+.title {
+  display: block;
+}
+.subtitle{
+  font-size: 10px;
+}

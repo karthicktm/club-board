@@ -1,0 +1,23 @@
+.header {
+  border-bottom: 1px solid #ccc;
+  height: 80px;
+}
+.title{
+  font-size: 18px;
+  font-weight: 600;
+  color: darkslategray;
+  padding: 10px 40px;;
+}
+
+thead {
+  background-color: #ccc;
+  height: 60px;
+
+}
+.col {
+  font-size: 14px;
+  text-align: center;
+}
+td{
+  text-align: center;
+}

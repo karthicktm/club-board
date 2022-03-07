@@ -1,0 +1,36 @@
+@import "~angular-vertical-timeline/dist/vertical-timeline.css";
+
+
+.breadcrumb{
+  text-decoration: none;
+  color: #45493e;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;;
+}
+.upper-row{
+  height: 310px;
+}
+.custom-card{
+  height: 300px;
+}
+.custom-card-title {
+  border-bottom: 1px solid #ccc;
+}
+
+.status{
+  color: #45493e;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.label{
+  font-weight: bold;
+  font-size: 13px;
+  color:#45493e;
+}
+
+.value {
+  font-size: 14px;
+  color:#45493e;
+}

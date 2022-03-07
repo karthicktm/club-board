@@ -1,0 +1,133 @@
+<a class="breadcrumb" routerLink="/list"><    Go back to shipment management</a>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="shipping-details-tab" 
+    data-toggle="tab" (click)="click('shipment')"
+    role="tab" aria-controls="shipping-details" aria-selected="true">Shipping details</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="ledger-report-tab" 
+    data-toggle="tab" (click)="click('ledger')"
+    role="tab" aria-controls="ledger-report" aria-selected="false">Ledger report</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" class="shippingDetailsTab" id="shippingDetailsTab" role="tabpanel" aria-labelledby="shipping-details-tab">
+    <div class="row">
+      <div class="col-3">
+        <ul class="main-list">
+          <li class="entry" *ngFor="let tracking of details.shipmentTrackerEvents.slice().reverse()">
+            <div class="target">
+              <h6 class="title">{{ tracking.eventDesc}}</h6>
+              <div class="content">{{ tracking.eventDate}}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="col-5">
+        <div class="card custom-card">
+          <div class="card-body">
+            <div class="custom-card-title">
+              <div class="row">
+                <div class="col-5">
+                  <h6 class="card-title">Shipment Id : {{ this.shipmentId }}</h6>
+                </div>
+                <div class="col-4 status">
+                  Status : {{ details?.status }}
+                </div>
+                <div class="col-3 status"> {{details.currentRole}}</div>
+               
+              </div>
+            </div>
+            <div class="card-text">
+              <div class="row">
+                <div class="col-sm label">Vaccine name</div>
+                <div class="col-sm label">Qty</div>
+                <div class="col-sm label">Origin</div>
+              </div>
+              <div class="row">
+                <div class="col-sm value">{{ details.vaccineName}}</div>
+                <div class="col-sm value">{{details.quantity}}</div>
+                <div class="col-sm value">{{details.wayBill.origin}}</div>
+              </div>
+    
+              <div class="row">
+                <div class="col-sm label">Insurer</div>
+                <div class="col-sm label">Insured value</div>
+                <div class="col-sm label">Destination</div>
+              </div>
+              <div class="row">
+                <div class="col-sm value">{{details.insurer}}</div>
+                <div class="col-sm value">{{details.insuredValue}}</div>
+                <div class="col-sm value">{{details.wayBill.destination}}</div>
+              </div>
+    
+              <div class="row">
+                <div class="col-sm label">Batch ID</div>
+                <div class="col-sm label">Shipment ID</div>
+                <div class="col-sm label">Current Insurer</div>
+              </div>
+              <div class="row">
+                <div class="col-sm value">{{ details.batchId}}</div>
+                <div class="col-sm value">{{details.shipmentId}}</div>
+                <div class="col-sm value">{{details.insurer}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <img src="../../../assets/images/googlemap.png" width="490" height="300"/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title">Shipment Id : {{ this.shipmentId }}</h6>
+            <div class="card-text" *ngIf="lineChartData">
+              <div class="chartjs-container">
+                <canvas baseChart 
+                  height="100" 
+                  [datasets]="lineChartData" 
+                  [labels]="lineChartLabels" 
+                  [legend]="false" 
+                  [chartType]="'line'" 
+                >
+                </canvas>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <div style="display:none" class="tab-pane fade" class="ledgerDetailsTab" id="ledgerDetailsTab" role="tabpanel" aria-labelledby="ledger-report-tab">
+    <table class="table">
+      <thead>
+          <th class="col">Shipment Owner</th>
+          <th class="col">Sensor ID</th>
+          <th class="col">Temperature</th>
+          <th class="col">Humidity</th>
+          <th class="col">Location</th>
+          <th class="col">Date and Time</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ledgerDetail of ledgerDetails">
+          <td>{{ ledgerDetail.CurrentOwner }}</td>
+          <td>{{ ledgerDetail.deviceId }}</td>
+          <td>{{ ledgerDetail.Temperature }}</td>
+          <td>{{ ledgerDetail.Humidity }}</td>
+          <td>{{ ledgerDetail.newLocation }}</td>
+          <td>{{ ledgerDetail.DateTime | date }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+
