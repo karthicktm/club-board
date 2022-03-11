@@ -1,0 +1,823 @@
+documentation:
+  version: "0.20"
+  title: 'Coldchain QLDB  Demo API'
+  description: 'Documentation of the APIs for the Coldchain QLDB demo application'
+  models:
+    - name: ShipVaccineboxRequest
+      description: 'Ship Vaccinebox request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - vaccineName
+          - shipmentId
+          - quantity
+          - wayBill
+        properties:
+          vaccineName:
+            type: string
+          shipmentId:
+            type: string
+          quantity:
+            type: string
+          wayBill:
+            type: object
+            properties:
+              origin:
+                type: string
+              originRole:
+                type: string
+              originAddress:
+                type: string
+              destination:
+                type: string
+              destinationRole:
+                type: string
+              destinationAddress:
+                type: string
+              logistics:
+                type: string
+          policyId:
+            type: string
+          insurer:
+            type: string
+          insuredValue:
+            type: integer
+
+    - name: ShipVaccineboxResponse
+      description: 'Ship Vaccinebox response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - vaccineName
+          - shipmentId
+          - quantity
+          - temperatureExcursion
+          - manufacturer
+          - currentRole
+          - currentOwner
+          - status
+          - shipmentTrackerEvent
+        properties:
+          vaccineName:
+            type: string
+          shipmentId:
+            type: string
+          quantity:
+            type: string
+          destinationAddress:
+            type: string
+          temperatureExcursion:
+            type: integer
+          manufacturer:
+            type: string
+          status:
+            type: string
+          currentRole:
+            type: string
+          currentOwner:
+            type: string
+          policyId:
+            type: string
+          insurer:
+            type: string
+          insuredValue:
+            type: integer
+          shipmentTrackerEvent:
+            type: object
+            required:
+              - eventOwner
+              - eventRole
+              - eventType
+              - eventDesc
+              - sensorCondition
+              - eventDate
+            properties:
+              eventOwner:
+                type: string
+              eventRole:
+                type: string
+              eventType:
+                type: string
+              eventDesc:
+                type: string
+              sensorCondition:
+                type: string
+              eventDate:
+                type: string
+                format: date-time
+              nextRole:
+                type: string
+
+    - name: ShipVaccineboxRetailDeliveryRequest
+      description: 'Ship Vaccinebox request model for retail delivery'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - RetailShipmentId
+          - RetailQuantity
+          - WayBill
+          - MasterShipmentId
+        properties:
+          RetailShipmentId:
+            type: string
+          RetailQuantity:
+            type: integer
+          WayBill:
+            type: object
+            properties:
+              origin:
+                type: string
+              originRole:
+                type: string
+              originAddress:
+                type: string
+              destination:
+                type: string
+              destinationRole:
+                type: string
+              destinationAddress:
+                type: string
+              logistics:
+                type: string
+          MasterShipmentId:
+            type: string
+
+    - name: ShipVaccineboxRetailDeliveryResponse
+      description: 'Sensor Data request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - RetailShipmentId
+          - RetailQuantity
+          - WayBill
+          - MasterShipmentIde
+        properties:
+          RetailShipmentId:
+            type: string
+          RetailQuantity:
+            type: string
+          WayBill:
+            type: object
+            properties:
+              origin:
+                type: string
+              originRole:
+                type: string
+              originAddress:
+                type: string
+              destination:
+                type: string
+              destinationRole:
+                type: string
+              destinationAddress:
+                type: string
+              logistics:
+                type: string
+          MasterShipmentId:
+            type: string
+
+    - name: AddSensorDataRequest
+      description: 'Update Deliver Shipment  request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - deviceId
+          - telemetry
+        properties:
+          shipmentId:
+            type: string
+          deviceId:
+            type: string
+          telemetry:
+            type: object
+            properties:
+              eventType:
+                type: string
+              eventDesc:
+                type: string
+              temp:
+                type: integer
+              humidity:
+                type: integer
+              longitude:
+                type: string
+              latitude:
+                type: string
+              eventDate:
+                type: string
+                format: date-time
+
+    - name: AddSensorDataResponse
+      description: 'Sensor Data request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - deviceId
+          - response
+        properties:
+          shipmentId:
+            type: string
+          deviceId:
+            type: string
+          response:
+            type: string
+
+    - name: AddSensorDataSimulationRequest
+      description: 'Update Deliver Shipment  request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - deviceId
+          - telemetry
+        properties:
+          shipmentId:
+            type: string
+          deviceId:
+            type: string
+          telemetry:
+            type: object
+            properties:
+              eventType:
+                type: string
+              eventDesc:
+                type: string
+              temp:
+                type: integer
+              humidity:
+                type: integer
+              longitude:
+                type: string
+              latitude:
+                type: string
+              eventDate:
+                type: string
+                format: date-time
+
+    - name: AddSensorDataSimulationResponse
+      description: 'Sensor Data Response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - deviceId
+          - response
+        properties:
+          shipmentId:
+            type: string
+          deviceId:
+            type: string
+          response:
+            type: string
+
+    - name: DeliverShipmentRequest
+      description: 'Update Deliver Shipment  request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - currentOwner
+          - currentRole
+          - nextRole
+          - shipmentTrackerEvent
+        properties:
+          shipmentId:
+            type: string
+          currentOwner:
+            type: string
+          currentRole:
+            type: string
+          nextRole:
+            type: string
+          shipmentTrackerEvent:
+            type: object
+            properties:
+              eventType:
+                type: string
+              eventDesc:
+                type: string
+              eventDate:
+                type: string
+                format: date-time
+              sensorCondition:
+                type: string
+              nextRole:
+                type: string
+
+    - name: DeliverShipmentResponse
+      description: 'Update Deliver Shipment Response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - currentRole
+          - nextRole
+          - response
+        properties:
+          shipmentId:
+            type: string
+          currentRole:
+            type: string
+          nextRole:
+            type: string
+          response:
+            type: string
+
+    - name: ReceiveShipmentRequest
+      description: 'Update Contact request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - currentRole
+          - nextRole
+          - shipmentTrackerEvent
+        properties:
+          shipmentId:
+            type: string
+          currentRole:
+            type: string
+          nextRole:
+            type: string
+          shipmentTrackerEvent:
+            type: object
+            properties:
+              eventType:
+                type: string
+              eventDesc:
+                type: string
+              sensorCondition:
+                type: string
+              eventDate:
+                type: string
+                format: date-time
+
+    - name: ReceiveShipmentResponse
+      description: 'Update Contact request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - currentRole
+          - shipmentTrackerEvent
+        properties:
+          shipmentId:
+            type: string
+          currentRole:
+            type: string
+          shipmentTrackerEvent:
+            type: object
+            properties:
+              eventType:
+                type: string
+              eventDesc:
+                type: string
+              sensorCondition:
+                type: string
+              eventDate:
+                type: string
+                format: date-time
+              nextRole:
+                type: string
+           
+    - name: GetShipmentResponse
+      description: 'Get Vaccinebox response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - vaccineName
+          - shipmentId
+          - quantity
+          - destinationAddress
+          - temperatureExcursion
+          - manufacturer
+          - currentRole
+          - shipmentTrackerEvent
+
+        properties:
+          vaccineName:
+            type: string
+          shipmentId:
+            type: string
+          quantity:
+            type: string
+          destinationAddress:
+            type: string
+          deviceid:
+            type: string
+          temperatureExcursion:
+            type: integer
+          currentRole:
+            type: string
+          policyId:
+            type: string
+          insurer:
+            type: string
+          claimId:
+            type: string
+          claimStatus:
+            type: string
+          shipmentTrackerEvents:
+            type: array
+            description: 'Array of events against the Vaccinebox'
+            items:
+              type: object
+              required:
+                - eventType
+                - eventDesc
+                - sensorCondition
+                - eventDate
+                - nextRole
+              properties:
+                eventOwner:
+                  type: string
+                eventType:
+                  type: string
+                eventDesc:
+                  type: string
+                sensorCondition:
+                  type: string
+                eventDate:
+                  type: string
+                  format: date-time
+                nextRole:
+                  type: string
+
+    - name: GetShipmentMovementsResponse
+      description: 'Get Shipment Movements response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - status
+          - sensorCondition
+          - eventDate
+        properties:
+          shipmentId:
+            type: string
+          status:
+            type: string
+          sensorCondition:
+            type: string
+          eventDate:
+            type: string
+            format: date-time
+
+    - name: GetSensorDataResponse
+      description: 'Get SensorData response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - deviceid
+          - temperature
+          - txTime
+          - Hash
+        properties:
+          shipmentId:
+            type: string
+          deviceId:
+            type: string
+          temperature:
+            type: integer
+          txTime:
+            type: string
+            format: date-time
+          Hash:
+            type: string
+
+    - name: GetAssetTransferHistoryResponse
+      description: 'Get AssetTransfer response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - deviceid
+          - temperatureExcursion
+          - currentOwner
+          - PartyAddress
+          - hash
+          - txId
+        properties:
+          shipmentId:
+            type: string
+          deviceid:
+            type: string
+          temperatureExcursion:
+            type: string
+          currentOwner:
+            type: string
+          PartyAddress:
+            type: string
+          hash:
+            type: string
+          txId:
+            type: string
+
+    - name: GetAuditTrailResponse
+      description: 'Get Shipment Movements response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - status
+          - eventDate
+        properties:
+          shipmentId:
+            type: string
+          status:
+            type: string
+          eventDate:
+            type: string
+            format: date-time
+
+    - name: AddClaimDataRequest
+      description: 'Update Deliver Shipment  request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - policyId
+        properties:
+          shipmentId:
+            type: string
+          policyId:
+            type: string
+          claimRequestDate:
+            type: string
+            format: date-time
+          claimStatus:
+            type: string
+
+    - name: AddClaimDataResponse
+      description: 'Sensor Data request model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - policyId
+          - claimId
+          - response
+        properties:
+          shipmentId:
+            type: string
+          policyId:
+            type: string
+          claimId:
+            type: string
+          response:
+            type: string
+
+    - name: GetClaimDataResponse
+      description: 'Get ClaimData response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - claimRequestDate
+          - manufacturer
+          - vaccineName
+          - quantity
+          - status
+        properties:
+          shipmentId:
+            type: string
+          claimRequestDate:
+            type: string
+            format: date-time
+          manufacturer:
+            type: string
+          vaccineName:
+            type: string
+          quantity:
+            type: integer
+          status:
+            type: string
+
+    - name: GetRecentShipmentResponse
+      description: 'Get GetRecentShipmentResponse model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - shippingDate
+        properties:
+          shipmentId:
+            type: string
+          shippingDate:
+            type: string
+            format: date-time
+
+    - name: GetRecentClaimResponse
+      description: 'Get GetRecentClaimResponse model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - claimRequestDate
+          - manufacturer
+          - vaccineName
+          - quantity
+          - status
+        properties:
+          shipmentId:
+            type: string
+          claimRequestDate:
+            type: string
+            format: date-time
+          manufacturer:
+            type: string
+          vaccineName:
+            type: string
+          quantity:
+            type: integer
+          status:
+            type: string
+
+    - name: GraphInfo
+      description: 'Get GraphInfo model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        properties:
+          RiskRating:
+            type: integer
+          GeoLocation:
+            type: object
+            properties:
+              latitude:
+                type: string
+              longitude:
+                type: string
+              location:
+                type: string
+
+    - name: HighRiskNotificationResponse
+      description: 'Get HighRiskNotificationResponse model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - highRiskShipmentCount
+        properties:
+          highRiskShipmentCount:
+            type: integer
+
+    - name: ShipmentCount
+      description: 'Get Count Shipments model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentCount
+        properties:
+          shipmentCount:
+            type: integer
+
+    - name: ClaimCount
+      description: 'Get Count Shipments model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - claimCount
+        properties:
+          claimCount:
+            type: integer
+
+    - name: CountShipmentsAndClaims
+      description: 'Get CountShipmentsAndClaims model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentCount
+          - claimCount
+        properties:
+          shipmentCount:
+            type: integer
+          claimCount:
+            type: integer
+
+    - name: GetHighRiskShipmentResponse
+      description: 'Get HighRiskShipments response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - claimRequestDate
+          - manufacturer
+          - vaccineName
+          - quantity
+          - status
+        properties:
+          shipmentId:
+            type: string
+          claimRequestDate:
+            type: string
+            format: date-time
+          manufacturer:
+            type: string
+          vaccineName:
+            type: string
+          quantity:
+            type: integer
+          status:
+            type: string
+
+    - name: GetShipmentByPartyResponse
+      description: 'Get ShipmentByParty response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        required:
+          - shipmentId
+          - policyId
+          - manufacturer
+          - vaccineName
+          - quantity
+          - status
+          - claimId
+        properties:
+          shipmentId:
+            type: string
+          policyId:
+            type: string
+          vaccineName:
+            type: string
+          quantity:
+            type: integer
+          status:
+            type: string
+          claimId:
+            type: string
+
+    - name: RetailerShipments
+      description: 'Get RetailerShipments response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        properties:
+          shipmentId:
+            type: string
+          deviceId:
+            type: string
+          batchId:
+            type: string
+          RootLeg:
+            type: object
+          ChildLeg:
+            type: object
+
+    - name: RouteMap
+      description: 'Get RetailerShipments response model'
+      contentType: 'application/json'
+      schema:
+        $schema: 'http://json-schema.org/draft/2019-09/schema#'
+        properties:
+          shipmentId:
+            type: string
+          CurrentLocation:
+            type: object
+          Legs:
+            type: object
+
+    - name: 'StandardApiError'
+      description: 'Nested error for StandardApiErrors'
+      contentType: 'application/json'
+      schema:
+        '$schema': 'http://json-schema.org/draft/2019-09/schema#'
+        type: object
+        properties:
+          status:
+            type: string
+          title:
+            type: string
+          detail:
+            type: string
+

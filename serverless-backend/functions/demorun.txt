@@ -1,0 +1,46 @@
+1. Teraform intro - 
+ 1. tera script example - half a min
+ 2. Just talk about the script -and bring up the provisioining slide ..
+  this is what we are provis with this TF script in Labs AWS env
+  - talk a few things about scripts
+    1. security group : peer security
+    2. xenial vm image being used
+    3. Talk about INC file
+      - what is INC file : targets inventory for Ansible comprsing Host names / IP Addresses that will be provisioned in respectie VMs
+      - show ec-2master section in hosts.inc file
+        - this file is generated TF and consumed by Ansible Host
+        - Show line no 4 of commands.txt file that invokes TF tool 
+           - pls talk about the parameters being passed in this line. mention count of orders, count of peers, count of prom/grafana etc 
+   - this is for master org.
+ Like wise, show the Slave org TF command invocation line
+
+This TF command, in future phases, will be triggered from SNOW and TF API will be used for this purpose
+
+ For demo video -
+1. show you are connecting to AWS via Putty
+2. show the TF Apply command you are invoking to create to setup Master Org in AWS
+3. Show that command has succsfufly exec
+4. Show the AWS console screen with the respective VMs enabled
+5. This has created Inventory for Ansible Controller to setup HL F / Grafana / Prom / Kafka and more s/w in the respeve AWS VMs just provisoned
+6. 
+ 
+ 
+ https://docs.microsoft.com/en-us/azure/blockchain/templates/hyperledger-fabric-consortium-azure-kubernetes-service
+ 
+ Using Microsoft Azure Kubernetes Service, we can build build Hyperledger Fabric(HLF) Blockchain. 
+ 
+ 1.) Hyperledger Fabric consortium on Azure Kubernetes Service (AKS)
+ 
+	We can use the Hyperledger Fabric (HLF) on Azure Kubernetes Service (AKS) template to deploy and configure a Hyperledger Fabric consortium network on Azure.
+	
+	To build Hyperledger Fabric network on Azure, you need to deploy Ordering Service and organization with peer nodes. 
+ 
+	Setup Hyperledger Fabric Blockchain network using the following steps:
+
+	Deploy the orderer/peer organization
+	
+		Select create to start the template deployment. The Create Hyperledger Fabric on Azure Kubernetes Service displays.
+		Enter the project details in Basics page.	
+	
+	Build the consortium
+	Run native HLF operations

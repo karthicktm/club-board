@@ -1,0 +1,1019 @@
+# Serverless!
+#
+# This file is the main config file for COLDCHAIN APIs.
+#
+# Sathish Kumar
+
+service: coldchain-qldb-demo-v12
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512
+  stage: ${opt:stage, 'v12'}
+  region: us-east-1
+  logRetentionInDays: 7 # Set the default RetentionInDays for a CloudWatch LogGroup
+  tracing:
+    apiGateway: true
+    lambda: true # Optional, can be true (true equals 'Active'), 'Active' or 'PassThrough'
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED	: "1"
+    LEDGER_NAME: coldchain
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - qldb:SendCommand
+      Resource: arn:aws:qldb:us-east-1:125396772501:ledger/coldchain
+    - Effect: Allow
+      Action: 
+        - qldb:PartiQL*
+      Resource: arn:aws:qldb:us-east-1:125396772501:ledger/coldchain/*
+
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource: "*" # Restrict resource to minimum required
+
+    - Effect: "Allow"
+      Action:
+        - "SNS:Publish"
+      Resource: "arn:aws:sns:us-east-1:127703500906:InsInno1"
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-pseudo-parameters
+  - serverless-webpack
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
+custom:
+  documentation: ${file(qldb-demo.doc.yml):documentation}
+  webpack:
+    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    includeModules: false   # Node modules configuration for packaging
+    packager: 'npm'   # Packager that will be used to package your external modules
+
+functions:
+  createNewShipment:
+    name: add-shipment-${self:provider.stage}
+    handler: functions/add-shipment.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/shipment
+          method: post
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Ship Vaccine Box"
+            description: "Initiate shipment of vaccine box"
+            requestModels:
+              application/json: ShipVaccineboxRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Ship Vaccinebox"
+                responseModels:
+                  application/json: ShipVaccineboxResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Vaccinebox Integrity Error"
+                responseModels:
+                  application/json: StandardApiError  
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+  createNewRetailShipment:
+    name: add-retailerShipments-${self:provider.stage}
+    handler: functions/add-retailerShipments.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/retailShipment
+          method: post
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Ship Vaccine Box"
+            description: "Initiate shipment of vaccine box to retailer"
+            requestModels:
+              application/json: ShipVaccineboxRetailDeliveryRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Ship Vaccinebox"
+                responseModels:
+                  application/json: ShipVaccineboxRetailDeliveryResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Vaccinebox Integrity Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+  getShipmentData:
+    name: get-shipment-${self:provider.stage}
+    handler: functions/get-shipment.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/shipment/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Shipment"
+            description: "Retrieves shipment details"
+            pathParams:
+              - 
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment response"
+                responseModels:
+                  application/json: GetShipmentResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError    
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  deliverShipment:
+    name: deliverShipment-${self:provider.stage}
+    handler: functions/deliver-shipment.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/deliver/shipment
+          method: put
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Deliver Shipment"
+            description: "Updates Shipment with new Ownership"
+            requestModels:
+              application/json: DeliverShipmentRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Deliver Shipment"
+                responseModels:
+                  application/json: DeliverShipmentResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Vaccinebox Integrity Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+  receiveShipment:
+    name: receiveShipment-${self:provider.stage}
+    handler: functions/receive-shipment.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/receive/shipment
+          method: put
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Update Shipment "
+            description: "Updates Shipment with new Ownership"
+            requestModels:
+              application/json: ReceiveShipmentRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Shipment"
+                responseModels:
+                  application/json: ReceiveShipmentResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Vaccinebox Integrity Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+  addSensorData:
+    name: add-sensorData-${self:provider.stage}
+    handler: functions/add-sensorData.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/sensorData
+          method: put
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Insert Sensor Data"
+            description: "Insert Sensor Data of vaccine box"
+            requestModels:
+              application/json: AddSensorDataRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Sensor Data Data Insert"
+                responseModels:
+                  application/json: AddSensorDataResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Integrity Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+  getSensorData:
+    name: get-sensorData-${self:provider.stage}
+    handler: functions/get-sensorData.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/alert/sensorData
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Sensor Data "
+            description: "Retrieves Sensor Data "
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Sensor Data  response"
+                responseModels:
+                  application/json: GetSensorDataResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  addSensorDataSimulation:
+    name: add-sensorDataSimulation-${self:provider.stage}
+    handler: functions/add-sensorDataSimulation.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/simulateSensorData
+          method: post
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Insert Sensor Data"
+            description: "Insert Sensor Data of vaccine box"
+            requestModels:
+              application/json: AddSensorDataSimulationRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Sensor Data Data Insert"
+                responseModels:
+                  application/json: AddSensorDataSimulationResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Integrity Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+  getShipmentMovements:
+    name: get-shipmentMovements-${self:provider.stage}
+    handler: functions/get-shipmentMovements.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/events/shipmentMovements/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Shipment Movement information"
+            description: "Retrieves Shipment Movement details"
+            pathParams:
+              -
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment Movement information  response"
+                responseModels:
+                  application/json: GetShipmentMovementsResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getAuditTrail:
+    name: get-auditTrail-${self:provider.stage}
+    handler: functions/get-auditTrail.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/report/sensorDataAuditTrail/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Audit Trail information"
+            description: "Retrieves Audit Trail details"
+            pathParams:
+              -
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment Audit Trail  response"
+                responseModels:
+                  application/json: GetAuditTrailResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getTemperatureGraph:
+    name: get-temperatureGraph-${self:provider.stage}
+    handler: functions/get-temperatureGraph.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/report/temperatureGraph/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Temperature Graph information"
+            description: "Retrieves Temperature Graph details"
+            pathParams:
+              -
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment Temperature Graph response"
+                responseModels:
+                  application/json: GetAuditTrailResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getHumidityGraph:
+    name: get-humidityGraph-${self:provider.stage}
+    handler: functions/get-humidityGraph.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/report/humidityGraph/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get humidity graph information"
+            description: "Retrieves humidity graph details"
+            pathParams:
+              -
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment humidity graph  response"
+                responseModels:
+                  application/json: GetAuditTrailResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  addInsuranceClaim:
+    name: add-insuranceClaim-${self:provider.stage}
+    handler: functions/add-insuranceClaim.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/claimRequest
+          method: post
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Insert Claim Request"
+            description: "Claim Request for vaccine box shipment"
+            requestModels:
+              application/json: AddClaimDataRequest
+            methodResponses:
+              - statusCode: '200'
+                responseBody:
+                  description: "Response from Claim Data Insert"
+                responseModels:
+                  application/json: AddClaimDataResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Integrity Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+          reqValidatorName: RequestValidator
+
+
+  getClaimData:
+    name: get-claimData-${self:provider.stage}
+    handler: functions/get-claimData.handler
+    events:
+      - http:
+          path: /coldchain/insurance/shipmentData
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Claim Data"
+            description: "Retrieves Claim Data"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Claim Data  response"
+                responseModels:
+                  application/json: GetClaimDataResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getShipmentLocationByParty:
+    name: get-shipmentLocationByParty-${self:provider.stage}
+    handler: functions/get-shipmentLocationByParty.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/shipmentLocation/{party}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Claim Data"
+            description: "Retrieves shipment with location Data"
+            pathParams:
+              -
+                name: "party"
+                description: "Retrieves shipment with location Data"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Claim Data  response"
+                responseModels:
+                  application/json: GetClaimDataResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+
+  getShipmentByParty:
+    name: get-shipmentByParty-${self:provider.stage}
+    handler: functions/get-shipmentByParty.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/shipmentByParty/{party}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get shipment data"
+            description: "Retrieves shipment data"
+            pathParams:
+              -
+                name: "party"
+                description: "Manufacturer of the shipment to retrieve"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment Data  response"
+                responseModels:
+                  application/json: GetShipmentByPartyResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getRecentShipments:
+    name: get-recentShipments-${self:provider.stage}
+    handler: functions/get-recentShipments.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/recentShipments
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get shipment data"
+            description: "Retrieves recent shipments"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "recent shipments"
+                responseModels:
+                  application/json: GetRecentShipmentResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getRecentClaims:
+    name: get-recentClaims-${self:provider.stage}
+    handler: functions/get-recentClaims.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/recentClaims
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get recent claims data"
+            description: "Retrieves recent shipments"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "recent claims"
+                responseModels:
+                  application/json: GetRecentClaimResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getRecentClaimsByParty:
+    name: get-recentClaimsByParty-${self:provider.stage}
+    handler: functions/get-recentClaimsByParty.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/recentClaimsByParty/{party}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get recent claims data"
+            description: "Retrieves recent shipments"
+            pathParams:
+              -
+                name: "party"
+                description: "Party to retrieve data"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "recent claims"
+                responseModels:
+                  application/json: GetRecentClaimResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  notifyHighRiskShipments:
+    name: notify-highRiskShipments-${self:provider.stage}
+    handler: functions/notify-highRiskShipments.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/notifyHighRiskShipments
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Notify High Risk Count"
+            description: "Notify High Risk Shipments"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "High Risk Shipments"
+                responseModels:
+                  application/json: HighRiskNotificationResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getHighRiskShipments:
+    name: get-highRiskShipments-${self:provider.stage}
+    handler: functions/get-highRiskShipments.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/highRiskShipments
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get HighRiskShipments Data"
+            description: "Retrieves HighRiskShipments Data"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "High Risk Shipments  response"
+                responseModels:
+                  application/json: GetHighRiskShipmentResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getHighRiskShipmentsByParty:
+    name: get-highRiskShipmentsByParty-${self:provider.stage}
+    handler: functions/get-highRiskShipmentsByParty.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/highRiskShipments/{party}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get HighRiskShipments Data"
+            description: "Retrieves HighRiskShipments Data"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "High Risk Shipments  response"
+            pathParams:
+              -
+                name: "party"
+                description: "Manufacturer of the shipment to retrieve"
+                responseModels:
+                  application/json: GetHighRiskShipmentResponse
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getShipmentCountByParty:
+    name: get-shipmentCountByParty-${self:provider.stage}
+    handler: functions/get-shipmentCountByParty.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/shipmentCountByParty/{party}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Shipments count"
+            description: "Retrieves shipments  count"
+            pathParams:
+              -
+                name: "party"
+                description: "Manufacturer of the shipment to retrieve"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment count response"
+                responseModels:
+                  application/json: ShipmentCount
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getShipmentCount:
+    name: get-shipmentCount-${self:provider.stage}
+    handler: functions/get-shipmentCount.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/shipmentCount
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Shipments count"
+            description: "Retrieves shipments  count"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Shipment count response"
+                responseModels:
+                  application/json: ShipmentCount
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getClaimCountByParty:
+    name: get-claimCountByParty-${self:provider.stage}
+    handler: functions/get-claimCountByParty.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/claimCountByParty/{party}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Claims count"
+            description: "Retrieves claims  count"
+            pathParams:
+              -
+                name: "party"
+                description: "Manufacturer of the shipment to retrieve"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Claims count response"
+                responseModels:
+                  application/json: ClaimCount
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getClaimCount:
+    name: get-claimCount-${self:provider.stage}
+    handler: functions/get-claimCount.handler
+    events:
+      - http:
+          path: /coldchain/vaccinebox/claimCount
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get Claims count"
+            description: "Retrieves claims  count"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Claims count response"
+                responseModels:
+                  application/json: ClaimCount
+              - statusCode: '400'
+                responseBody:
+                  description: "ClaimData Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getGraphInfo:
+    name: get-graphInfo-${self:provider.stage}
+    handler: functions/get-graphInfo.handler
+    events:
+      - http:
+          path: /coldchain/shipment/graphInfo
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get graph data"
+            description: "Retrieves graph data"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "graph data"
+                responseModels:
+                  application/json: GraphInfo
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getTrackingProvenance:
+    name: get-trackingProvenance-${self:provider.stage}
+    handler: functions/get-trackingProvenance.handler
+    events:
+      - http:
+          path: /coldchain/shipment/provenance/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get retailer shipments data"
+            description: "Retrieves retailer shipments data"
+            pathParams:
+              -
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "retailer shipments data"
+                responseModels:
+                  application/json: RetailerShipments
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+  getShipmentRoute:
+    name: get-shipmentRoute-${self:provider.stage}
+    handler: functions/get-shipmentRoute.handler
+    events:
+      - http:
+          path: /coldchain/shipment/routeMap/{shipmentId}
+          method: get
+          cors:
+            origin: '*'
+          documentation:
+            summary: "Get routeMap shipments data"
+            description: "Retrieves routeMap shipments data"
+            pathParams:
+              -
+                name: "shipmentId"
+                description: "ID of the Shipment to retrieve"
+                required: true
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "routeMap shipments data"
+                responseModels:
+                  application/json: RouteMap
+              - statusCode: '400'
+                responseBody:
+                  description: "Shipment Not Found Error"
+                responseModels:
+                  application/json: StandardApiError
+              - statusCode: '500'
+                responseBody:
+                  description: "Error message"
+                responseModels:
+                  application/json: StandardApiError
+            reqValidatorName: RequestValidator
+
+
+resources:
+  Resources:
+    RequestValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'req-validator'
+        RestApiId: !Ref ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: true
+
+    GatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseType: BAD_REQUEST_BODY
+        ResponseTemplates:
+          'application/json': "{\"status\":\"400\", \"title\":\"Invalid Request\", \"detail\": \"$context.error.validationErrorString\"}"
+        RestApiId: !Ref ApiGatewayRestApi
+        StatusCode: '400'
