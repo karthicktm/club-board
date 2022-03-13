@@ -51,7 +51,7 @@ Serverless applications can be a cost saver, but above all, they remove most of 
 
 ##### ReactJS Web Application deployed in S3 (1). 
 
-[Web Application Repository](https://github.dxc.com/InsuranceInnovation/Blockchain-UX-Visualization.git)
+[Web Application Repository](https://localhost)
 
 ##### Web Application does REST calls to API Gateway (2). 
 
@@ -63,7 +63,7 @@ Serverless applications can be a cost saver, but above all, they remove most of 
 
 ![ConsoleOutPut](images/pub-sub-http.png)
 
-[A2A-Messaging](https://github.dxc.com/InsuranceInnovation/A2A-Messaging-FanoutToHTTP)
+[A2A-Messaging](https://localhost/InsuranceInnovation/A2A-Messaging-FanoutToHTTP)
 
 ## Technology Stack
 
@@ -102,7 +102,7 @@ To build & deploy ColdChain MVP backend, use the following commands:
 
 Step 1. Checkout code from github repository. 
 
-    	$ git clone https://github.dxc.com/InsuranceInnovation/Coldchain.git
+    	$ git clone https://localhost/InsuranceInnovation/Coldchain.git
 
     	$ git checkout master
 
@@ -162,7 +162,7 @@ Create a QLDB legder and create the below listed Tables and Indexes
 
 Create a SNS topic and subscribe http endpoint in SNS. 
 
-[A2A-Messaging](https://github.dxc.com/InsuranceInnovation/A2A-Messaging-FanoutToHTTP)
+[A2A-Messaging](https://localhost/InsuranceInnovation/A2A-Messaging-FanoutToHTTP)
 
 #### ARN Configuration
 	
@@ -172,10 +172,7 @@ Modify Coldchain QLDB & SNS Topic ARN in serverless.yaml
 
 Coldchain application APIs is implemented as Lambda functions and deployed into S3 by AWS SAM deployment model.
 
-[API Documentation](http://ec2-52-55-7-42.compute-1.amazonaws.com:8080/docs/)
+[API Documentation](http://localhost:8080/docs/)
 
-##### For any queries contact;
-	Siddiqi, Faisal <fsiddiqi@dxc.com> 
-	Rao, Gururaj	<grao9@dxc.com> 
-	Sathish Kumar	<skrishnankut@dxc.com>
+
 
