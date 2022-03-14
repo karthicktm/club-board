@@ -32,8 +32,8 @@ It is expected that since the storage & transportation involves multiple entitie
 #### =>   Flawless delivery Covid-19 Vaccine from the manufacture to the hospitals or customers location.
 #### =>   Ensuring high quality of goods shipped to the end consumer.
 
-![ConsoleOutPut](images/dashboard.png)
-![ConsoleOutPut](images/tracking.png)
+![ConsoleOutPut](../images/dashboard.png)
+![ConsoleOutPut](../images/tracking.png)
 
 ## Ecosystem
        
