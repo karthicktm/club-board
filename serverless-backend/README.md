@@ -37,7 +37,7 @@ It is expected that since the storage & transportation involves multiple entitie
 
 ## Ecosystem
        
-![ConsoleOutPut](images/Ecosystem.PNG)
+![ConsoleOutPut](../images/Ecosystem.PNG)
 
 ## Solution Architecture
 ### why Serverless 
@@ -45,9 +45,9 @@ It is expected that since the storage & transportation involves multiple entitie
 Serverless is a concept for operating cloud applications in comparison to VM based or container based architectures. The code is executed by Function-as-a-Service (FaaS) services like AWS Lambda. You only provide your source code (think NodeJs files and libraries). AWS takes care of the execution, scaling and so on.  The idea of Serverless architectures is using additional services like S3 for storage, QLDB as a database, Cognito for user management and so on. All these services scale with your demand, you only pay for used resources (not for idle) and they are all operated by your cloud vendor, e.g. AWS.
 Serverless applications can be a cost saver, but above all, they remove most of the operational complexity. Serverless allows writing cloud applications with high availability and scalability easily.
 
-![ConsoleOutPut](images/coldchain-qldb.png)
+![ConsoleOutPut](../images/coldchain-qldb.png)
 
-![ConsoleOutPut](images/Arch-Layers.png)
+![ConsoleOutPut](../images/Arch-Layers.png)
 
 ##### ReactJS Web Application deployed in S3 (1). 
 
@@ -61,7 +61,7 @@ Serverless applications can be a cost saver, but above all, they remove most of 
 
 ### Push Notification
 
-![ConsoleOutPut](images/pub-sub-http.png)
+![ConsoleOutPut](../images/pub-sub-http.png)
 
 [A2A-Messaging](https://localhost/InsuranceInnovation/A2A-Messaging-FanoutToHTTP)
 
@@ -86,11 +86,11 @@ Serverless applications can be a cost saver, but above all, they remove most of 
 #### =>   Familiarity - QLDB supports PartiQL which is a SQL-compatible open standard query language. QLDB supports Amazon ION document data format. This is a superset of JSON that supports a rich type system.
 #### =>   Central trusted authority - QLDB is focused on use cases where there is a single owner of the ledger. This is where it differentiates from distributed ledger technologies that require multiple parties to agree a transaction is valid with no single owner.
 
-![ConsoleOutPut](images/blockchain-qldb.png)
+![ConsoleOutPut](../images/blockchain-qldb.png)
 
 ### How QLDB works
 
-![ConsoleOutPut](images/QLDB-Works.png)
+![ConsoleOutPut](../images/QLDB-Works.png)
 
 ## MVP Deployment
 
@@ -148,7 +148,7 @@ Create a QLDB legder and create the below listed Tables and Indexes
 
 #### Tables & Indexes	
 
-![ConsoleOutPut](images/Tables_Indexes.PNG)
+![ConsoleOutPut](../images/Tables_Indexes.PNG)
 
 #### Insert Master Data for Party Table with Party data in following JSON format.    
 	
